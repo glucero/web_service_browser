@@ -35,7 +35,7 @@
 (def app-window
   (frame :title        "Web Service Browser"
          :content      ""
-         :minimum-size [600 :by 600]))
+         :minimum-size [900 :by 600]))
 
 (def main-frame
   ; to give us a 'web browser' effect, we do 3 things
