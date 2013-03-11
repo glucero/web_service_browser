@@ -4,7 +4,8 @@
             [clojure.string  :as s])
 
   (:import  javax.swing.event.HyperlinkEvent
-            javax.swing.event.HyperlinkEvent$EventType)
+            javax.swing.event.HyperlinkEvent$EventType
+            java.net.URL)
 
   (:use     seesaw.core ; <3
             seesaw.font
@@ -20,17 +21,22 @@
 
 (defn ssbe-http
   [method url & [options]] ; add :body "" for methods :put and :post
-  (:body (http/request
-    (merge options {:method          method ; :get, :put, :post
-                    :url             url
-                    :digest-auth     [*ssbe-user* *ssbe-pass*]
-                    :conn-timeout    5000
-                    :socket-timeout  5000
-                    :client-params   {"http.useragent" "web-service-browser"}
-                    :throw-exception false
-                    :accept          :json
-                    :content-type    :json
-                    :as              :json}))))
+  (let [uri (URL. url)]
+    (:body (http/request
+      (merge options {:method          method ; :get, :put, :post
+                      :scheme          :https
+                      :server-name     (.getHost uri)
+                      :server-port     443
+                      :uri             (.getPath uri)
+                      :query-string    (.getQuery uri)
+                      :digest-auth     [*ssbe-user* *ssbe-pass*]
+                      :conn-timeout    5000
+                      :socket-timeout  5000
+                      :client-params   {"http.useragent" "web-service-browser"}
+                      :throw-exception false
+                      :accept          :json
+                      :content-type    :json
+                      :as              :json}))))
 
 (def app-window
   (frame :title        "Web Service Browser"
@@ -42,12 +48,14 @@
   ;
   ; 1. set this frame's content-type to 'text/html'
   ; 2. convert our json response to an html list with hyperlinks
-  ; 3. set a mouse click listener for the frame that
-  ;   a. make a web service request
-  ;   b. replaces the frame's content with the response
+  ; 3. set a mouse click listener for the frame that replaces the frame's
+  ;    content with the result of a web service request
   (let [pane (editor-pane :id           :editor
                           :text         ""
                           :editable?    false
+                          :font         (font :name  :monospaced
+                                              :style #{:bold :italic}
+                                              :size  18)
                           :content-type "text/html")]
     (listen pane :hyperlink (fn [event]
                               (when (= HyperlinkEvent$EventType/ACTIVATED (.getEventType event))
