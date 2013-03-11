@@ -40,10 +40,11 @@
 (def main-frame
   ; to give us a 'web browser' effect, we do 3 things
   ;
-  ; 1. set this frame's content-type is 'text/html'
+  ; 1. set this frame's content-type to 'text/html'
   ; 2. convert our json response to an html list with hyperlinks
-  ; 3. set a mouse click listener for the frame that creates a web services
-  ;    request and replaces the frame's content with the response
+  ; 3. set a mouse click listener for the frame that
+  ;   a. make a web service request
+  ;   b. replaces the frame's content with the response
   (let [pane (editor-pane :id           :editor
                           :text         ""
                           :editable?    false
@@ -71,8 +72,7 @@
   ([hashmap list-type wrapper separator]
   [list-type {:style "list-style-type: none;"}
     (for [[key val] hashmap]
-      [:li [wrapper
-                      ; :key-name : value or link
+      [:li [wrapper   ; :key-name : value or link
         (str (name key) separator) (if (map? val) ; create nested lists
                                      (hashmap->list val list-type wrapper separator)
                                      (if (re-matches #"^.*href$" (name key))
@@ -107,8 +107,7 @@
                             (alter-var-root (var *ssbe-home*) (constantly (str "https://core." backend "/service_descriptors")))
                             (open *ssbe-home*)))))))
 
-(defn -main
-  []
+(defn -main []
   (native!)
   (login!)
   (-> app-window pack! show!))
