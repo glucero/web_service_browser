@@ -53,9 +53,6 @@
   (let [pane (editor-pane :id           :editor
                           :text         ""
                           :editable?    false
-                          :font         (font :name  :monospaced
-                                              :style #{:bold :italic}
-                                              :size  18)
                           :content-type "text/html")]
     (listen pane :hyperlink (fn [event]
                               (when (= HyperlinkEvent$EventType/ACTIVATED (.getEventType event))
