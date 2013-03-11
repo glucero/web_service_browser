@@ -36,7 +36,7 @@
                       :throw-exception false
                       :accept          :json
                       :content-type    :json
-                      :as              :json}))))
+                      :as              :json})))))
 
 (def app-window
   (frame :title        "Web Service Browser"
