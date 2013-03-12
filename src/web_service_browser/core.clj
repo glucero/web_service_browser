@@ -1,4 +1,6 @@
 (ns web-service-browser.core
+  (:gen-class)
+
   (:require [clj-http.client :as http]
             [cheshire.core   :as json]
             [clojure.string  :as s])
