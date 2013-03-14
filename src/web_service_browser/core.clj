@@ -68,16 +68,17 @@
     (listen login-button :action (fn [event] (login!)))
     (horizontal-panel :items [login-button home-button])))
 
+
 (defn string->link
-  ([href]      (string->link href href))
-  ([name href] [:a {:href href} name]))
+  ([url] (string->link url url))
+  ([url name] [:a {:href url} name]))
 
 (defn hashmap->list
   ([hashmap]                   (hashmap->list hashmap :ul :span _:_))
   ([hashmap list-type]         (hashmap->list hashmap list-type :span _:_))
   ([hashmap list-type wrapper] (hashmap->list hashmap list-type wrapper _:_))
   ([hashmap list-type wrapper separator]
-  [list-type {:style "list-style-type: none;"}
+  [list-type
     (for [[key val] hashmap]
       [:li [wrapper   ; :key-name : value or link
         (str (name key) separator) (if (map? val) ; create nested lists
@@ -86,10 +87,14 @@
                                        (string->link val) ; make links for hrefs
                                        val))]])]))
 
+(def bootstrap-css (URL. "http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css"))
+
 (defn open
   [url]
   (let [response (ssbe-http :get url)]
-    (config! main-frame :text (html (if-let [items (:items response)]
+    (config! main-frame :text (html 
+                                [:link {:type "text/css", :href bootstrap-css, :rel "stylesheet"}]
+                                (if-let [items (:items response)]
                                       (map hashmap->list items)
                                       (hashmap->list response)))))
   (config! app-window :content (border-panel :north  panel-pane

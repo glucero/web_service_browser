@@ -6,5 +6,6 @@
                      [seesaw              "1.4.2"]
                      [clj-http            "0.6.5"]
                      [hiccup              "1.0.2"]]
+  :aot              [web-service-browser.core]
   :main             web-service-browser.core)
 
